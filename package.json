@@ -1,0 +1,25 @@
+{
+  "name": "@arraypress/audit-log",
+  "version": "1.0.0",
+  "description": "Generic audit trail logging. Log actions, query by actor/resource, retention cleanup. Storage-agnostic.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "files": ["src"],
+  "scripts": {
+    "test": "node --test tests/audit-log.test.js"
+  },
+  "keywords": ["audit", "logging", "trail", "activity", "security", "compliance"],
+  "author": "David Sherlock",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arraypress/audit-log"
+  }
+}
