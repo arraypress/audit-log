@@ -63,6 +63,26 @@ export function createAuditLog(store) {
     },
 
     /**
+     * Fire-and-forget audit log. Never throws — failures surface as a
+     * `console.warn` with the action name in the message for grep-ability,
+     * but the caller is never blocked or surprised by a store error from
+     * a code path that doesn't depend on the audit row.
+     *
+     * Use this for the 95% case where the audit row is "nice to have"
+     * (every auth/team/settings handler in a typical app); reserve
+     * `log()` for the rare cases where you genuinely need to `await`
+     * the write or handle the error.
+     *
+     * @param {AuditEntry} entry
+     *
+     * @example
+     * audit.logSafe({ action: 'auth.login', actorId: '1', actorEmail: 'a@b', ip });
+     */
+    logSafe(entry) {
+      this.log(entry).catch(catchVisible(entry.action));
+    },
+
+    /**
      * Query audit logs with filtering and pagination.
      *
      * @param {Object} [filters]
@@ -169,6 +189,35 @@ export function createMemoryStore() {
       entries.push(...keep);
       return before - entries.length;
     },
+  };
+}
+
+/**
+ * Build a `.catch` handler that logs failures as `console.warn` instead
+ * of swallowing them silently. Generic enough for any fire-and-forget
+ * promise — exported here because audit logging is the canonical use
+ * case and consumers shouldn't have to roll their own.
+ *
+ * The label appears in the warn message in square brackets so grep / log
+ * filters can identify the source quickly:
+ *
+ * ```
+ * [audit-log] auth.login failed: <error>
+ * ```
+ *
+ * @param {string} label - Identifier for the failing operation (e.g. action name).
+ * @returns {(err: unknown) => void} a `.catch` handler.
+ *
+ * @example
+ * // Composable form — use when the action name is in scope:
+ * audit.log({ action: 'auth.login', ... }).catch(catchVisible('auth.login'));
+ *
+ * // Generic form — works for any fire-and-forget promise:
+ * cache.set('user:1', user).catch(catchVisible('cache.set user:1'));
+ */
+export function catchVisible(label) {
+  return (err) => {
+    console.warn(`[audit-log] ${label} failed:`, err);
   };
 }
 
