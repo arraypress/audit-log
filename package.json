@@ -1,7 +1,7 @@
 {
   "name": "@arraypress/audit-log",
-  "version": "1.1.0",
-  "description": "Generic audit trail logging. Log actions, query by actor/resource, retention cleanup. Storage-agnostic.",
+  "version": "1.2.0",
+  "description": "Generic audit trail logging. Log actions, query by actor/resource, retention cleanup. Storage-agnostic with a built-in Kysely store.",
   "type": "module",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -9,17 +9,44 @@
     ".": {
       "import": "./src/index.js",
       "types": "./src/index.d.ts"
+    },
+    "./kysely": {
+      "import": "./src/kysely.js",
+      "types": "./src/kysely.d.ts"
     }
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "test": "node --test tests/*.test.js"
   },
-  "keywords": ["audit", "logging", "trail", "activity", "security", "compliance"],
+  "keywords": [
+    "audit",
+    "logging",
+    "trail",
+    "activity",
+    "security",
+    "compliance",
+    "kysely",
+    "d1"
+  ],
   "author": "David Sherlock",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/arraypress/audit-log"
+  },
+  "peerDependencies": {
+    "kysely": "^0.27.0 || ^0.28.0"
+  },
+  "peerDependenciesMeta": {
+    "kysely": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "better-sqlite3": "^12.9.0",
+    "kysely": "^0.28.16"
   }
 }
